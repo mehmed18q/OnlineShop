@@ -10,12 +10,15 @@ namespace Core.FluentAPIConfigurations
         {
             _ = builder.ToTable("Products", "Base");
 
-            _ = builder.HasKey(p => p.Id);
+            _ = builder.HasKey(product => product.Id);
 
-            _ = builder.Property(p => p.ProductName)
+            _ = builder.Property(product => product.ProductName)
                 .HasColumnName("Title")
                 .HasMaxLength(256)
                 .HasColumnOrder(1);
+
+            _ = builder.Property(product => product.Description)
+                .HasMaxLength(1000);
         }
     }
 }

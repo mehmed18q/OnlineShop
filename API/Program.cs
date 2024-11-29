@@ -1,8 +1,11 @@
+using API;
 using Application;
-using Application.Interfaces;
-using Application.Services;
+using Application.AuthenticateCommandQuery.Command;
+using Application.ProductCommandQuery.Command;
 using AutoMapper;
 using Core;
+using Infrastructure;
+using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -12,12 +15,23 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+#region Configuration
+builder.Services.AddOptions();
+builder.Services.Configure<Configs>(builder.Configuration.GetSection(nameof(Configs)));
+#endregion
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Online Shop API", Version = "V1" });
     options.EnableAnnotations();
 });
+
+#region Mediator
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SaveProductCommand).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
+#endregion
 
 #region Register DbContext
 string connectionString = builder.Configuration.GetConnectionString("SqlConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -28,8 +42,11 @@ builder.Services.AddDbContext<OnlineShopDbContext>(options =>
 });
 #endregion
 
-#region Register Services
-builder.Services.AddScoped<IProductService, ProductService>();
+#region Registerations
+builder.Services.AddJWT();
+builder.Services.AddRepositories();
+builder.Services.AddUnitOfWork();
+builder.Services.AddInfraUtility();
 #endregion
 
 #region Auto Mapper
@@ -54,6 +71,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllers();
 

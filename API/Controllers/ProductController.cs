@@ -1,5 +1,6 @@
-﻿using Application.Interfaces;
-using Infrastructure.Dto;
+﻿using Application.ProductCommandQuery.Command;
+using Application.ProductCommandQuery.Query;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -7,33 +8,44 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductController(IProductService productService) : Controller
+    public class ProductController(IMediator mediator) : Controller
     {
-        private readonly IProductService _productService = productService;
+        private readonly IMediator _mediator = mediator;
 
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         [SwaggerOperation(
             Summary = "Get a Product",
             Description = "Get a Product with Id",
             OperationId = "Product.Get",
-            Tags = ["ProductController"])]
-        public async Task<IActionResult> Get(int id)
+            Tags = ["Product"])]
+        public async Task<IActionResult> Get([FromQuery] GetProductQuery query)
         {
-            ProductDto result = await _productService.Get(id);
+            GetProductQueryResponse result = await _mediator.Send(query);
             return Ok(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [SwaggerOperation(
+            Summary = "Get All Products",
+            Description = "Get All Products",
+            OperationId = "Product.GetAll",
+            Tags = ["Product"])]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllProductQuery query)
         {
-            List<ProductDto> result = await _productService.GetAll();
+            List<GetProductQueryResponse> result = await _mediator.Send(query);
+
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(ProductDto model)
+        [SwaggerOperation(
+            Summary = "Add a Product",
+            Description = "Add a Product with SaveProductCommand",
+            OperationId = "Product.Add",
+            Tags = ["Product"])]
+        public async Task<IActionResult> Add(SaveProductCommand command)
         {
-            ProductDto result = await _productService.Add(model);
+            SaveProductCommandResponse result = await _mediator.Send(command);
             return Ok(result);
         }
     }
