@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.FluentAPIConfigurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core
@@ -9,12 +10,7 @@ namespace Core
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            _ = modelBuilder.Entity<Product>()
-                 .Property(p => p.ProductName)
-                 .HasColumnName("Title")
-                 .IsRequired();
-
-            _ = modelBuilder.Entity<Product>().ToTable("Products", "Base");
+            _ = modelBuilder.ApplyConfiguration(new ProductEntityConfiguration());
         }
     }
 }

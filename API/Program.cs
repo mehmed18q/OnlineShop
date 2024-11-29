@@ -1,5 +1,7 @@
+using Application;
 using Application.Interfaces;
 using Application.Services;
+using AutoMapper;
 using Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -28,6 +30,16 @@ builder.Services.AddDbContext<OnlineShopDbContext>(options =>
 
 #region Register Services
 builder.Services.AddScoped<IProductService, ProductService>();
+#endregion
+
+#region Auto Mapper
+MapperConfiguration config = new(cfg =>
+{
+    cfg.AddProfile(new AutoMapperConfig());
+});
+
+IMapper mapper = config.CreateMapper();
+builder.Services.AddSingleton(mapper);
 #endregion
 
 WebApplication app = builder.Build();

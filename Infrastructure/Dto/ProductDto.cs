@@ -7,6 +7,6 @@
         public string ProductName { get; set; } = null!;
 
         public long Price { get; set; }
-        public string PriceWithComma => Price.ToString("###.###");
+        public string PriceWithComma { get; set; } = null!;
     }
 }
