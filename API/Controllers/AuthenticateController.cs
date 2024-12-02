@@ -31,7 +31,7 @@ namespace API.Controllers
         Tags = ["Authenticate"])]
         public async Task<IActionResult> Register(RegisterCommand command)
         {
-            Unit result = await _mediator.Send(command);
+            RegisterCommandResponse result = await _mediator.Send(command);
             return Ok(result);
         }
     }

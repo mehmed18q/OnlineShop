@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="AuthenticateCommandQuery\Query\" />
+    <Folder Include="ProductCommandQuery\Notification\" />
   </ItemGroup>
 
 </Project>

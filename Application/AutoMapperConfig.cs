@@ -1,4 +1,5 @@
-﻿using Application.ProductCommandQuery.Command;
+﻿using Application.AuthenticateCommandQuery.Command;
+using Application.ProductCommandQuery.Command;
 using Application.ProductCommandQuery.Query;
 using AutoMapper;
 using Core.Entities;
@@ -9,6 +10,8 @@ namespace Application
     {
         public AutoMapperConfig()
         {
+
+            #region Product
             #region SaveProductCommand
             _ = CreateMap<SaveProductCommand, Product>();
 
@@ -20,6 +23,14 @@ namespace Application
             _ = CreateMap<Product, GetProductQueryResponse>()
                .ForMember(destination => destination.PriceWithComma, option => option.MapFrom(source => source.Price.ToString("#,0")))
                .ForMember(destination => destination.Title, option => option.MapFrom(source => source.ProductName));
+            #endregion
+            #endregion
+
+            #region User
+            _ = CreateMap<RegisterCommand, User>()
+                .ForMember(destination => destination.RegisterDate, option => option.MapFrom(_ => DateTime.Now));
+
+            _ = CreateMap<User, LoginCommandResponse>();
             #endregion
         }
     }

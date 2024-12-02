@@ -7,7 +7,6 @@ using Core;
 using Infrastructure;
 using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +21,7 @@ builder.Services.Configure<Configs>(builder.Configuration.GetSection(nameof(Conf
 #endregion
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Online Shop API", Version = "V1" });
-    options.EnableAnnotations();
-});
+builder.Services.AddSwagger();
 
 #region Mediator
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SaveProductCommand).Assembly));
@@ -70,8 +65,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

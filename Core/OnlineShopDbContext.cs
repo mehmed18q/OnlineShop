@@ -13,6 +13,7 @@ namespace Core
         {
             _ = modelBuilder.ApplyConfiguration(new ProductEntityConfiguration());
             _ = modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new UserRefreshTokenEntityConfiguration());
         }
     }
 }

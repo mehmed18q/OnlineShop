@@ -15,6 +15,12 @@ namespace Infrastructure.Repositories
             return user;
         }
 
+        public async Task<bool> IsUserExist(string userName)
+        {
+            bool isUserExist = await _dbContext.Users.AnyAsync(user => user.UserName == userName);
+            return isUserExist;
+        }
+
         public async Task<Guid> InsertAsync(User user)
         {
             _ = await _dbContext.AddAsync(user);

@@ -1,6 +1,7 @@
 ﻿using Application.ProductCommandQuery.Command;
 using Application.ProductCommandQuery.Query;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -8,6 +9,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class ProductController(IMediator mediator) : Controller
     {
         private readonly IMediator _mediator = mediator;

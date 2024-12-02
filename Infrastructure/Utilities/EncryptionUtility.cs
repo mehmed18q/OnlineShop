@@ -25,6 +25,11 @@ namespace Infrastructure.Utilities
             return Guid.NewGuid().ToString();
         }
 
+        public (string, int) GetNewRefreshToken()
+        {
+            return (Guid.NewGuid().ToString(), _appConfig.RefreshTokenTimeout);
+        }
+
         public (string, int) GetNewToken(Guid userId)
         {
             JwtSecurityTokenHandler tokenHandler = new();
