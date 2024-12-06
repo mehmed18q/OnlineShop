@@ -1,5 +1,6 @@
-﻿using AutoMapper;
-using Core.Entities;
+﻿using Application.AuthenticateCommandQuery.Notification;
+using AutoMapper;
+using Core.Entities.Security;
 using Core.IRepositories;
 using Infrastructure.Utilities;
 using MediatR;
@@ -21,11 +22,12 @@ namespace Application.AuthenticateCommandQuery.Command
         public int RefreshTokenExpireTime { get; set; }
     }
 
-    public class LoginCommandHandler(IUserRepository repository, IMapper mapper, EncryptionUtility encryptionUtility) : IRequestHandler<LoginCommand, LoginCommandResponse>
+    public class LoginCommandHandler(IUserRepository repository, IMapper mapper, EncryptionUtility encryptionUtility, IMediator mediator) : IRequestHandler<LoginCommand, LoginCommandResponse>
     {
         private readonly IUserRepository _repository = repository;
         private readonly IMapper _mapper = mapper;
         private readonly EncryptionUtility _encryptionUtility = encryptionUtility;
+        private readonly IMediator _mediator = mediator;
 
         public async Task<LoginCommandResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
@@ -38,7 +40,13 @@ namespace Application.AuthenticateCommandQuery.Command
                     LoginCommandResponse response = _mapper.Map<LoginCommandResponse>(user);
                     (response.Token, response.TokenExpireTime) = _encryptionUtility.GetNewToken(user.Id);
                     (response.RefreshToken, response.RefreshTokenExpireTime) = _encryptionUtility.GetNewRefreshToken();
-
+                    AddRefreshTokenNotification addRefreshTokenNotification = new()
+                    {
+                        RefreshToken = response.RefreshToken,
+                        RefreshTokenTimeout = response.RefreshTokenExpireTime,
+                        UserId = user.Id,
+                    };
+                    await _mediator.Publish(addRefreshTokenNotification, cancellationToken);
                     return response;
                 }
             }

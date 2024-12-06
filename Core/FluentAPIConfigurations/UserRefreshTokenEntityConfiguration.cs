@@ -1,4 +1,4 @@
-﻿using Core.Entities;
+﻿using Core.Entities.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,6 +11,8 @@ namespace Core.FluentAPIConfigurations
             _ = builder.ToTable("UserRefreshTokens", "Base");
 
             _ = builder.HasKey(userRefreshToken => userRefreshToken.Id);
+
+            _ = builder.HasOne(userRefreshToken => userRefreshToken.User);
 
             _ = builder.Property(userRefreshToken => userRefreshToken.RefreshToken)
                 .HasMaxLength(128);

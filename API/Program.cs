@@ -7,8 +7,15 @@ using Core;
 using Infrastructure;
 using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    ApplicationName = typeof(Program).Assembly.FullName,
+    ContentRootPath = Path.GetFullPath(Directory.GetCurrentDirectory()),
+    WebRootPath = Path.GetFullPath(Directory.GetCurrentDirectory()),
+    Args = args,
+});
 
 // Add services to the container.
 
@@ -42,6 +49,8 @@ builder.Services.AddJWT();
 builder.Services.AddRepositories();
 builder.Services.AddUnitOfWork();
 builder.Services.AddInfraUtility();
+builder.Services.AddApplicationServices();
+builder.Services.AddHttpContextAccessor();
 #endregion
 
 #region Auto Mapper
@@ -54,6 +63,8 @@ IMapper mapper = config.CreateMapper();
 builder.Services.AddSingleton(mapper);
 #endregion
 
+builder.Services.AddMemoryCache();
+
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,6 +73,14 @@ if (app.Environment.IsDevelopment())
     _ = app.UseSwagger();
     _ = app.UseSwaggerUI();
 }
+
+#region Static File
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, builder.Configuration.GetValue<string>("MediaPath")!)),
+    RequestPath = builder.Configuration.GetValue<string>("RequestMediaPath")!
+});
+#endregion
 
 app.UseHttpsRedirection();
 

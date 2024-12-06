@@ -1,4 +1,4 @@
-﻿using Core.Entities;
+﻿using Core.Entities.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,6 +11,8 @@ namespace Core.FluentAPIConfigurations
             _ = builder.ToTable("Users", "Base");
 
             _ = builder.HasKey(user => user.Id);
+
+            _ = builder.HasMany(user => user.UserRoles);
 
             _ = builder.Property(user => user.UserName)
                 .HasMaxLength(64);

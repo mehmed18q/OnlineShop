@@ -1,0 +1,5 @@
+vless://c3fb07bc-ff3c-41cc-9484-a47b9db4ad07@portal.dotasnapfire.sbs:2054?type=tcp&security=none#fr1-cons-MSQ
+
+vless://7340e218-bab5-4285-a841-0e9bfa5d9a5d@irandotaplayers.dotasnapfire.sbs:8880?type=ws&path=/&host=&security=none#gr-MSQ
+
+vless://f3efbde4-f0b8-4c47-b35f-14053235450d@fr1.dotasnapfire.sbs:80?type=ws&path=/&host=&security=none#fr1-MSQ

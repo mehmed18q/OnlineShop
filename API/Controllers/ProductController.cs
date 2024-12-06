@@ -1,16 +1,14 @@
-﻿using Application.ProductCommandQuery.Command;
+﻿using API.CustomAttributes;
+using Application.ProductCommandQuery.Command;
 using Application.ProductCommandQuery.Query;
+using Infrastructure;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    [Authorize]
-    public class ProductController(IMediator mediator) : Controller
+    public class ProductController(IMediator mediator) : BaseController
     {
         private readonly IMediator _mediator = mediator;
 
@@ -20,6 +18,7 @@ namespace API.Controllers
             Description = "Get a Product with Id",
             OperationId = "Product.Get",
             Tags = ["Product"])]
+        [AccessControl(Permission = PermissionFlags.GetProduct)]
         public async Task<IActionResult> Get([FromQuery] GetProductQuery query)
         {
             GetProductQueryResponse result = await _mediator.Send(query);
@@ -32,6 +31,7 @@ namespace API.Controllers
             Description = "Get All Products",
             OperationId = "Product.GetAll",
             Tags = ["Product"])]
+        [AccessControl(Permission = PermissionFlags.GetAllProducts)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllProductQuery query)
         {
             List<GetProductQueryResponse> result = await _mediator.Send(query);
@@ -45,7 +45,8 @@ namespace API.Controllers
             Description = "Add a Product with SaveProductCommand",
             OperationId = "Product.Add",
             Tags = ["Product"])]
-        public async Task<IActionResult> Add(SaveProductCommand command)
+        [AccessControl(Permission = PermissionFlags.AddProduct)]
+        public async Task<IActionResult> Add([FromForm] SaveProductCommand command)
         {
             SaveProductCommandResponse result = await _mediator.Send(command);
             return Ok(result);

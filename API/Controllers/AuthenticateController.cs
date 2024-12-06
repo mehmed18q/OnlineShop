@@ -34,5 +34,17 @@ namespace API.Controllers
             RegisterCommandResponse result = await _mediator.Send(command);
             return Ok(result);
         }
+
+        [HttpPost("GenerateToken")]
+        [SwaggerOperation(
+        Summary = "Generate Token",
+        Description = "Generate Token with GenerateTokenCommand",
+        OperationId = "Authenticate.GenerateToken",
+        Tags = ["Authenticate"])]
+        public async Task<IActionResult> GenerateToken(GenerateTokenCommand command)
+        {
+            GenerateTokenCommandResponse result = await _mediator.Send(command);
+            return Ok(result);
+        }
     }
 }

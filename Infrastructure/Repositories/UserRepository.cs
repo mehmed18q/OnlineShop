@@ -1,5 +1,5 @@
 ﻿using Core;
-using Core.Entities;
+using Core.Entities.Security;
 using Core.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +19,12 @@ namespace Infrastructure.Repositories
         {
             bool isUserExist = await _dbContext.Users.AnyAsync(user => user.UserName == userName);
             return isUserExist;
+        }
+
+        public async Task<UserRefreshToken?> GetCurrentUserRefreshToken(string refreshToken, Guid userId)
+        {
+            UserRefreshToken? userRefreshToken = await _dbContext.UserRefreshTokens.SingleOrDefaultAsync(userRefreshToken => userRefreshToken.RefreshToken == refreshToken && userRefreshToken.UserId == userId && userRefreshToken.IsValid);
+            return userRefreshToken;
         }
 
         public async Task<Guid> InsertAsync(User user)

@@ -39,8 +39,8 @@ namespace Infrastructure.Utilities
             {
                 Subject = new ClaimsIdentity(
                 [
-                    new("userId", userId.ToString()),
-                    new("TimeOut-Minute", _appConfig.TokenTimeout.ToString()),
+                    new(IdentityUtilities.UserIdClaimIdentity, userId.ToString()),
+                    new(IdentityUtilities.TimeoutClaimIdentity, _appConfig.TokenTimeout.ToString()),
                 ]),
 
                 Expires = DateTime.UtcNow.AddMinutes(_appConfig.TokenTimeout),
@@ -48,7 +48,7 @@ namespace Infrastructure.Utilities
             };
 
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-            return (tokenHandler.WriteToken(token), _appConfig.TokenTimeout);
+            return ($"Bearer {tokenHandler.WriteToken(token)}", _appConfig.TokenTimeout);
         }
     }
 }

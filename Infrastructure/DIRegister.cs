@@ -13,6 +13,9 @@ namespace Infrastructure
         {
             _ = services.AddScoped<IProductRepository, ProductRepository>();
             _ = services.AddScoped<IUserRepository, UserRepository>();
+            _ = services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
+            _ = services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+            _ = services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
         }
 
         public static void AddUnitOfWork(this IServiceCollection services)
@@ -23,6 +26,8 @@ namespace Infrastructure
         public static void AddInfraUtility(this IServiceCollection services)
         {
             _ = services.AddSingleton<EncryptionUtility>();
+            _ = services.AddSingleton<CacheUtility>();
+            _ = services.AddSingleton<FileUtility>();
         }
     }
 }

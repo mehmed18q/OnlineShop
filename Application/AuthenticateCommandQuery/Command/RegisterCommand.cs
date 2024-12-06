@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Core.Entities;
+using Core.Entities.Security;
 using Core.IRepositories;
 using Infrastructure.Interfaces;
 using Infrastructure.Utilities;
