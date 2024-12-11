@@ -12,7 +12,7 @@ namespace Infrastructure.Repositories
         {
             List<string> permissions = await _dbContext.RolePermissions
                  .Where(rolePermission => roleIds.Contains(rolePermission.RoleId))
-                 .Select(rolePermission => rolePermission.Permission.Flag).ToListAsync();
+                 .Select(rolePermission => rolePermission.Permission.Flag).AsNoTracking().ToListAsync();
 
             return permissions;
         }

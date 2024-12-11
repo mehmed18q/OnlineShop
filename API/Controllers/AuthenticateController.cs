@@ -1,15 +1,17 @@
 ﻿using Application.AuthenticateCommandQuery.Command;
+using Infrastructure.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class AuthenticateController(IMediator mediator) : Controller
+    [AllowAnonymous]
+    public class AuthenticateController(IMediator mediator, ILogger<ProductController> logger) : BaseController
     {
         private readonly IMediator _mediator = mediator;
+        private readonly ILogger<ProductController> _logger = logger;
 
         [HttpPost("Login")]
         [SwaggerOperation(
@@ -19,7 +21,7 @@ namespace API.Controllers
         Tags = ["Authenticate"])]
         public async Task<IActionResult> Login(LoginCommand command)
         {
-            LoginCommandResponse result = await _mediator.Send(command);
+            Response<LoginCommandResponse> result = await _mediator.Send(command);
             return Ok(result);
         }
 
@@ -31,7 +33,7 @@ namespace API.Controllers
         Tags = ["Authenticate"])]
         public async Task<IActionResult> Register(RegisterCommand command)
         {
-            RegisterCommandResponse result = await _mediator.Send(command);
+            Response<RegisterCommandResponse> result = await _mediator.Send(command);
             return Ok(result);
         }
 
@@ -43,7 +45,7 @@ namespace API.Controllers
         Tags = ["Authenticate"])]
         public async Task<IActionResult> GenerateToken(GenerateTokenCommand command)
         {
-            GenerateTokenCommandResponse result = await _mediator.Send(command);
+            Response<GenerateTokenCommandResponse> result = await _mediator.Send(command);
             return Ok(result);
         }
     }

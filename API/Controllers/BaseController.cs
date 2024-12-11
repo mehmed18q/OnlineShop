@@ -6,7 +6,5 @@ namespace API.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class BaseController : Controller
-    {
-    }
+    public class BaseController : Controller { }
 }

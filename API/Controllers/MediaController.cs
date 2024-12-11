@@ -5,9 +5,10 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    public class MediaController(FileUtility fileUtility) : BaseController
+    public class MediaController(FileUtility fileUtility, ILogger<ProductController> logger) : BaseController
     {
         private readonly FileUtility _fileUtility = fileUtility;
+        private readonly ILogger<ProductController> _logger = logger;
 
         [HttpGet("{entityRootPath}/{fileUrl}")]
         [AllowAnonymous]

@@ -1,6 +1,8 @@
 ﻿using Core;
 using Core.Entities;
 using Core.IRepositories;
+using Core.Models;
+using Core.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -15,9 +17,9 @@ namespace Infrastructure.Repositories
             return product;
         }
 
-        public async Task<List<Product>> GetAllAsync(string? term)
+        public async Task<List<Product>> GetAllAsync(string? term, Pagination pagination)
         {
-            List<Product> products = await _dbContext.Products.ToListAsync();
+            List<Product> products = await _dbContext.Products.Paging(pagination).AsNoTracking().ToListAsync();
 
             if (!string.IsNullOrEmpty(term))
             {

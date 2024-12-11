@@ -1,4 +1,5 @@
 using API;
+using API.Hubs;
 using Application;
 using Application.AuthenticateCommandQuery.Command;
 using Application.ProductCommandQuery.Command;
@@ -8,6 +9,7 @@ using Infrastructure;
 using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -17,10 +19,31 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationO
     Args = args,
 });
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Add services to the container.
+#region Serilog
+Serilog.Core.Logger logger = new LoggerConfiguration()
+  .ReadFrom.Configuration(builder.Configuration)
+  .Enrich.FromLogContext()
+  .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+#endregion
+
+builder.Services.AddMemoryCache();
+
+#region Mini Profiler
+// Mini Profile Need Memory Cache
+builder.Services.AddMiniProfiler(options =>
+{
+    options.RouteBasePath = "/profiler";
+    options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
+}).AddEntityFramework();
+// https://localhost:7266/profiler/results-index
+#endregion
 
 #region Configuration
 builder.Services.AddOptions();
@@ -41,6 +64,8 @@ string connectionString = builder.Configuration.GetConnectionString("SqlConnecti
 builder.Services.AddDbContext<OnlineShopDbContext>(options =>
 {
     _ = options.UseSqlServer(connectionString);
+    // As No Tracking All Queries
+    // _ = options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 #endregion
 
@@ -63,7 +88,8 @@ IMapper mapper = config.CreateMapper();
 builder.Services.AddSingleton(mapper);
 #endregion
 
-builder.Services.AddMemoryCache();
+//add SignalR
+builder.Services.AddSignalR();
 
 WebApplication app = builder.Build();
 
@@ -81,12 +107,13 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = builder.Configuration.GetValue<string>("RequestMediaPath")!
 });
 #endregion
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chatHub");
 
+app.UseMiniProfiler();
 app.Run();
